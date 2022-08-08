@@ -1,0 +1,690 @@
+
+@font-face {
+    font-family: 'Material Symbols';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../dependencies/symbols.woff2) format('woff2');
+}
+
+:root {
+    /* after this, 1rem = 1px */
+    font-size: 6.25%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: transparent;
+    direction: ltr;
+}
+
+body {
+    --dark-font: rgba(10, 10, 10, 1);
+    --dark-bg: rgba(40, 40, 40, 0.9);
+    --button-bg: rgba(99, 99, 99, 1);
+    --button-bg-darker: rgba(70, 70, 70, 1);
+    --button-bg-inactive: rgba(180, 180, 180, 1);
+    --button-bg-active: rgba(130, 130, 130, 1);
+    --darker-bg: rgba(20, 20, 20, 1);
+    --darker-bg-t1: rgba(20, 20, 20, 0.9);
+    --darker-bg-t2: rgba(20, 20, 20, 0.7);
+    --text-inactive: rgba(230, 230, 230, 1);
+    --tile-size: 40rem;
+    --tile-margin: 5rem;
+    --panel-spacing: 3rem;
+    --top-bar-height: 50rem;
+    --side-bar-width: 400rem;
+
+    font-size: 16rem;
+    min-width: 800rem;
+}
+
+#rem-converter {
+    display: none;
+    width: 100rem;
+}
+
+.panel {
+    background-color: var(--darker-bg);
+}
+
+.panel .symbol-label {
+    display: inline-block;
+    margin-left: 5rem;
+    margin-right: 3rem;
+    font-size: 20rem;
+    vertical-align: middle;
+}
+
+.symbol {
+    font-family: 'Material Symbols';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    vertical-align: middle;
+}
+
+.button {
+    background-color: var(--button-bg-inactive);
+    white-space: nowrap;
+    font-weight: bold;
+    color: var(--text-inactive);
+    text-align: center;
+    user-select: none;
+    cursor: default;
+}
+
+.button.active {
+    background-color: var(--button-bg);
+    color: white;
+    cursor: pointer;
+}
+
+.button.active:hover {
+    background-color: var(--button-bg-active);
+}
+
+#top-panels {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% - var(--side-bar-width));
+    display: grid;
+    grid-template-rows: auto;
+    column-gap: var(--panel-spacing);
+    align-items: start;
+    justify-content: center;
+    z-index: 1000;
+}
+
+#top-panels .panel {
+    padding: 5rem;
+    padding-bottom: 7rem;
+    grid-row: row 1 / span 1;
+
+    display: grid;
+    grid-template-rows: auto;
+    grid-column-gap: 5rem;
+}
+
+#top-panels .panel .symbol {
+    font-size: 26rem;
+}
+
+#top-panels .button {
+    grid-row: row 1 / span 1;
+    padding: 3rem 6rem;
+}
+
+@media only screen and (max-width: 1400px) {
+    #top-panels .button .symbol-label {
+        display: none;
+    }
+}
+
+#side-panels {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: var(--side-bar-width);
+    height: 100%;
+    display: grid;
+    grid-template-columns: [left] auto [right];
+    grid-template-rows: [statistics] min-content [status] min-content [code] auto [install] min-content;
+    row-gap: var(--panel-spacing);
+    background-color: white;
+    border-left: var(--panel-spacing) solid white;
+    z-index: 1000;
+}
+
+#statistics-panel {
+    grid-column: left / right;
+    grid-row: statistics / span 1;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#status-panel {
+    font-size: 14rem;
+
+    padding: 10rem;
+    color: white;
+
+    grid-column: left / right;
+    grid-row: status / span 1;
+
+    background-color: var(--darker-bg);
+    animation-duration: 1s;
+}
+
+@keyframes flash {
+    0%{ background-color: white; }
+    100%{ background-color: var(--darker-bg); }
+}
+
+#status-panel.highlight {
+    animation-name: flash;
+}
+
+#code-panel {
+    grid-column: left / right;
+    grid-row: code / span 1;
+
+    overflow: hidden;
+
+    position: relative;
+}
+
+#install-panel {
+    grid-column: left / right;
+    grid-row: install / span 1;
+
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-row-gap: 5rem;
+    grid-column-gap: 5rem;
+    padding: 5rem;
+}
+
+#install-panel .symbol {
+    font-size: 20rem;
+}
+
+.statistics-container {
+    margin: 3rem 5rem;
+    padding: 2rem;
+
+    display: grid;
+    grid-template-columns: [key] auto [value] min-content;
+    grid-template-rows: [top] auto [bottom];
+    grid-column-gap: 1rem;
+    align-items: start;
+}
+
+.statistics-container>* {
+    padding: 2rem;
+}
+
+.statistics-description {
+    color: white;
+    font-weight: bold;
+    grid-column: key / span 1;
+    grid-row: top / bottom;
+}
+
+.short-description {
+    display: none;
+}
+
+.statistics-value {
+    color: white;
+    text-align: right;
+    grid-column: value / span 1;
+    grid-row: top / bottom;
+}
+
+#example-selection-overlay {
+    position: absolute;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: white;
+    padding: 10rem;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    padding-top: 30rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s linear, visibility 0.2s step-end, padding-top 0.5s;
+    z-index: 100;
+}
+
+#example-selection-overlay.visible {
+    padding-top: 10rem;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s linear, visibility 0.2s step-start, padding-top 0.5s;
+}
+
+#example-selection-overlay .inverted-button {
+    margin: 2rem;
+    padding: 4rem 2rem;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#example-selection-overlay .inverted-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#example-selection-overlay #example-close-button {
+    font-weight: bold;
+}
+
+#program {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 10rem;
+    padding-bottom: 40rem;
+    width: 100%;
+    height: 100%;
+    resize: none;
+    border: none;
+    overflow: auto;
+    background-color: transparent;
+    font-family: Consolas, Liberation Mono, monospace;
+    font-weight: bold;
+    color: white;
+}
+
+#code-changed-indicator {
+    position: absolute;
+    top: 10rem;
+    right: 10rem;
+
+    color: white;
+    user-select: none;
+    font-weight: bold;
+    font-size: 30rem;
+    line-height: 30rem;
+    z-index: 10;
+}
+
+#code-changed-indicator.hidden {
+    display: none;
+}
+
+#install-panel .button {
+    padding: 3rem 6rem;
+    font-size: 20rem;
+}
+
+#tapes {
+    margin-top: calc(var(--top-bar-height) + var(--panel-spacing));
+    margin-right: calc(var(--side-bar-width) + var(--panel-spacing));
+    margin-left: var(--panel-spacing);
+}
+
+#tape-template {
+    display: none;
+}
+
+.tape-module {
+    width: 100%;
+    margin: 20rem 0;
+    color: white;
+
+    display: grid;
+    grid-auto-rows: auto;
+    grid-template-columns: [left] 1fr 1fr [right];
+    row-gap: 3rem;
+    column-gap: 0;
+}
+
+@media only screen and (max-width: 1200px) {
+    .tape-module {
+        grid-template-columns: [left] 1fr [right];
+    }
+}
+
+.tape-panel {
+    height: 30rem;
+    padding: 0 5rem;
+    background-color: var(--darker-bg);
+    white-space: nowrap;
+    cursor: default;
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: auto;
+    align-items: center;
+}
+
+.tape-panel-content-right {
+    text-align: right;
+}
+
+.tape-container {
+    height: 120rem;
+    background-color: var(--darker-bg);
+    grid-column: left / right;
+    position: relative;
+    overflow: hidden;
+}
+
+.fade-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 80rem;
+    background-image: linear-gradient(to right, var(--darker-bg), var(--darker-bg) 30rem, var(--darker-bg-t1) 50rem, var(--darker-bg-t2) 70rem, rgba(0, 0, 0, 0));
+    z-index: 30;
+}
+
+.fade-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 80rem;
+    background-image: linear-gradient(to left, var(--darker-bg), var(--darker-bg) 30rem, var(--darker-bg-t1) 50rem, var(--darker-bg-t2) 70rem, rgba(0, 0, 0, 0));
+    z-index: 30;
+}
+
+.tape-panel .button {
+    padding: 2rem 5rem;
+    font-size: 14rem;
+    vertical-align: 1rem;
+}
+
+.tape-textbox {
+    width: 60rem;
+    text-align: center;
+    margin: 0 0;
+    padding: 1rem 5rem;
+    font-size: 13rem;
+    vertical-align: 1rem;
+    color: white;
+    border: 1rem solid white;
+    background-color: rgba(0, 0, 0, 1);
+}
+
+.text-icon {
+    display: inline-block;
+    width: 1.4em;
+    height: 1.4em;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.4em;
+    color: var(--darker-bg);
+    border-radius: 1rem;
+    background-color: white;
+}
+
+.tape-statistics-description {
+    font-weight: bold;
+}
+
+.spacer {
+    margin: 0 5rem;
+}
+
+.tape {
+    text-align: center;
+    position: relative;
+    left: 0;
+    width: calc(100% + 500rem);
+    margin-top: 35rem;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    white-space: nowrap;
+    animation-duration: 1s;
+}
+
+@keyframes move-tape-left {
+    0%{ left: -50rem; }
+    100%{ left: 0; }
+}
+
+@keyframes move-tape-right {
+    0%{ left: 50rem; }
+    100%{ left: 0; }
+}
+
+.tape.offset-left {
+    animation-name: move-tape-left;
+}
+
+.tape.offset-right {
+    animation-name: move-tape-right;
+}
+
+.tape-head {
+    background-color: rgba(255, 255, 255, 0.2);
+    width: calc(2 * var(--tile-margin) + var(--tile-size));
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    animation-duration: 1s;
+}
+
+@keyframes move-head-left {
+    0%{ left: -100rem; }
+    100%{ left: 0; }
+}
+
+@keyframes move-head-right {
+    0%{ left: 100rem; }
+    100%{ left: 0; }
+}
+
+.tape-head.offset-left {
+    animation-name: move-head-left;
+}
+
+.tape-head.offset-right {
+    animation-name: move-head-right;
+}
+
+.tape-head-align {
+    width: calc(3 * (2 * var(--tile-margin) + var(--tile-size)));
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.tape-container .button {
+    position: absolute;
+    z-index: 40;
+}
+
+.tape-container .button .symbol {
+    color: white;
+    font-size: 20rem;
+}
+
+.tape-container .button.left {
+    left: 4rem;
+    bottom: calc(50% + 5rem);
+}
+
+.tape-container .button.left-fast {
+    left: 4rem;
+    top: calc(50% + 5rem);
+}
+
+.tape-container .button.right {
+    right: 4rem;
+    bottom: calc(50% + 5rem);
+}
+
+.tape-container .button.right-fast {
+    right: 4rem;
+    top: calc(50% + 5rem);
+}
+
+.tape-head-indicator {
+    display: none;
+    color: white;
+    text-align: center;
+    font-size: 30rem;
+    margin-top: 0;
+    user-select: none;
+}
+
+.tape-head-indicator.active {
+    display: block;
+}
+
+.tape-entry {
+    display: inline-block;
+    width: var(--tile-size);
+    margin: var(--tile-margin);
+    text-align: center;
+}
+
+.tape-field {
+    background-color: white;
+    border-radius: 2rem;
+    font-weight: bold;
+    font-size: 26rem;
+    line-height: var(--tile-size);
+    height: var(--tile-size);
+    width: 100%;
+    color: black;
+}
+
+.tape-label {
+    margin-top: 2rem;
+    color: white;
+    width: 100%;
+    font-size: 18rem;
+}
+
+#help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color: rgba(220, 220, 220, 0.9);
+    background-color: rgba(0, 0, 0, 0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s linear, visibility 0.2s step-end;
+    z-index: 10000;
+}
+
+#help-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s linear, visibility 0.2s step-start;
+}
+
+#help-box-container {
+    position: relative;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1000rem;
+    height: 100%;
+}
+
+#help-overlay #help-box {
+    box-sizing: border-box;
+    padding: 20rem;
+    margin: 0;
+    padding-top: 100rem;
+    padding-bottom: 50rem;
+    width: 100%;
+    height: 100%;
+    line-height: 21rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: padding-top 0.5s;
+}
+
+#help-overlay.visible #help-box {
+    padding-top: 20rem;
+}
+
+#help-box h1 {
+    font-size: 30rem;
+    margin-top: 20rem;
+    margin-bottom: 5rem;
+    margin-left: 0;
+}
+
+#help-box h2 {
+    font-size: 25rem;
+    margin-top: 20rem;
+    margin-bottom: 5rem;
+    margin-left: 5rem;
+}
+
+#help-box h3 {
+    font-size: 20rem;
+    margin-top: 10rem;
+    margin-bottom: 5rem;
+    margin-left: 10rem;
+}
+
+#help-box code {
+    color: rgba(255, 255, 255, 0.9);
+    font-family: Liberation Mono, monospace;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 1rem 4rem;
+    border-radius: 3rem;
+}
+
+#help-box a {
+    text-decoration: underline;
+    cursor: pointer;
+    color: rgba(220, 220, 220, 0.9);
+}
+
+#help-box p {
+    margin: 10rem 0 10rem 20rem;
+    z-index: 3;
+}
+
+#help-box .red {
+    font-size: inherit;
+    font-family: inherit;
+    color: #ee4444;
+}
+
+#help-box .green {
+    font-size: inherit;
+    font-family: inherit;
+    color: #44ee44;
+}
+
+#help-close-button {
+    position: absolute;
+    top: 2rem;
+    right: 20rem;
+
+    color: white;
+    user-select: none;
+    font-weight: bold;
+    font-size: 30rem;
+    line-height: 30rem;
+    cursor: pointer;
+    z-index: 10000;
+}
+
+#pwa-invitation {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#pwa-invitation.hidden {
+    display: none;
+}

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Turing Machine Simulator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="dependencies/b+tree.js"></script>
+    <script type="text/javascript" src="dependencies/graphemes.js"></script>
+    <script type="text/javascript" src="dependencies/jquery.js"></script>
+    <script type="text/javascript" src="resources/examples.js"></script>
+    <script type="text/javascript" src="resources/turingsim4.js"></script>
+    <script type="text/javascript" src="resources/ui.js"></script>
+    <link rel="stylesheet" href="resources/layout.css" type="text/css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" sizes="16x16" href="resources/favicon-16x16.png" type="image/png">
+    <link rel="icon" sizes="32x32" href="resources/favicon-32x32.png" type="image/png">
+    <link rel="mask-icon" href="resources/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="resources/favicon.ico">
+    <link rel="apple-touch-icon" href="resources/apple-touch-icon.png">
+    <meta name="description" content="Web-based Turing Machine simulator for use in education">
+    <meta name="keywords" content="JavaScript, Turing Machine, Simulator, CS, Education">
+    <meta name="author" content="Justus Henneberg">
+    <meta name="apple-mobile-web-app-status-bar" content="#000000">
+    <meta name="theme-color" content="#000000">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="browserconfig.xml">
+</head>
+
+<body>
+<div id="top-panels">
+    <div class="panel" id="transport-control-panel">
+        <div class="button active" id="control-start-halt"><span title="START/HALT" class="symbol">play_pause</span><span class="symbol-label">START/HALT</span></div>
+        <div class="button active" id="control-step"><span title="STEP" class="symbol">skip_next</span><span class="symbol-label">STEP</span></div>
+        <div class="button active" id="control-skip"><span title="SKIP" class="symbol">fast_forward</span><span class="symbol-label">SKIP</span></div>
+        <div class="button active" id="control-reset-setup"><span title="INITIALIZE TAPES" class="symbol">undo</span><span class="symbol-label">INIT</span></div>
+    </div>
+    <div class="panel" id="speed-control-panel">
+        <div class="button active" id="control-speed-slower"><span class="symbol">looks_one</span><span class="symbol-label">SLOWER</span></div>
+        <div class="button active" id="control-speed-slow"><span class="symbol">looks_two</span><span class="symbol-label">SLOW</span></div>
+        <div class="button active" id="control-speed-fast"><span class="symbol">looks_3</span><span class="symbol-label">FAST</span></div>
+        <div class="button active" id="control-speed-faster"><span class="symbol">looks_4</span><span class="symbol-label">FASTER</span></div>
+    </div>
+</div>
+
+<div id="side-panels">
+    <div class="panel" id="statistics-panel">
+        <div class="statistics-container">
+            <div class="statistics-description long-description">STATE</div>
+            <div class="statistics-value" id="statistics-state">X</div>
+        </div>
+        <div class="statistics-container">
+            <div class="statistics-description long-description">TRANSITIONS</div>
+            <div class="statistics-value" id="statistics-transitions">X</div>
+        </div>
+        <div class="statistics-container">
+            <div class="statistics-description long-description">DONE</div>
+            <div class="statistics-value" id="statistics-done">X</div>
+        </div>
+        <div class="statistics-container">
+            <div class="statistics-description long-description">ACCEPT</div>
+            <div class="statistics-value" id="statistics-accept">X</div>
+        </div>
+    </div>
+
+    <div class="panel" id="status-panel">
+        No messages.
+    </div>
+
+    <div class="panel" id="code-panel">
+        <div id="code-changed-indicator" class="hidden" title="Code changed since last installation">
+            <span class="symbol">warning</span>
+        </div>
+        <div id="example-selection-overlay">
+            <div id="example-close-button" class="inverted-button">Back to Program</div>
+            <div id="example-list"></div>
+        </div>
+        <textarea id="program">@ADVANCED&#010;&#010;# YOUR CODE HERE&#010;# OR LOAD AN EXAMPLE BELOW&#010;</textarea>
+    </div>
+
+    <div class="panel" id="install-panel">
+        <div class="button active" id="install-button"><span class="symbol">input</span><span class="symbol-label">INSTALL</span></div>
+        <div class="button active" id="embed-button"><span class="symbol">share</span><span class="symbol-label">SHARE</span></div>
+        <div class="button active" id="examples-button"><span class="symbol">topic</span><span class="symbol-label">EXAMPLES</span></div>
+        <div class="button active" id="help-button"><span class="symbol">help_center</span><span class="symbol-label">MANUAL</span></div>
+    </div>
+</div>
+
+<div id="tapes">
+</div>
+
+<div id="tape-template" class="tape-module">
+    <div class="tape-panel tape-statistics">
+        <div class="tape-panel-content">
+            <span class="tape-statistics-description" title="Tape number">#</span>
+            <span class="js-output-number">X</span>
+            <span class="spacer"></span>
+            <span class="tape-statistics-description" title="Tape transitions">TRS</span>
+            <span class="js-output-transitions">X</span>
+            <span class="spacer"></span>
+            <span class="tape-statistics-description" title="Non-blank symbols">SYM</span>
+            <span class="js-output-symbols">X</span>
+            <span class="spacer"></span>
+            <span class="tape-statistics-description" title="Head position">POS</span>
+            <span class="js-output-head">X</span>
+        </div>
+    </div>
+    <div class="tape-panel tape-focus">
+        <div class="tape-panel-content tape-panel-content-right">
+            Focus on
+            <input type="text" class="js-input-position tape-textbox" placeholder="POSITION">
+            <span class="js-button-set button active">SET</span>
+            <span class="js-button-reset button active">RESET</span>
+            <span class="js-button-first button active">FIRST</span>
+            <span class="js-button-last button active">LAST</span>
+        </div>
+    </div>
+    <div class="tape-container">
+        <div class="tape-head-align">
+            <div class="tape-head">
+                <div class="tape-head-indicator tape-head-left-indicator active"><span class="symbol">east</span></div>
+                <div class="tape-head-indicator tape-head-right-indicator"><span class="symbol">west</span></div>
+            </div>
+        </div>
+        <div class="js-button-left button active left"><span class="symbol">keyboard_arrow_left</span></div>
+        <div class="js-button-left-fast button active left-fast"><span class="symbol">keyboard_double_arrow_left</span></div>
+        <div class="js-button-right button active right"><span class="symbol">keyboard_arrow_right</span></div>
+        <div class="js-button-right-fast button active right-fast"><span class="symbol">keyboard_double_arrow_right</span></div>
+        <div class="fade-left"></div>
+        <div class="fade-right"></div>
+        <div class="tape"></div>
+    </div>
+    <div class="tape-panel tape-initial-content">
+        <div class="tape-panel-content">
+            Initialize with
+            <input type="text" class="js-input-content tape-textbox" placeholder="CONTENT">
+            at
+            <input type="text" class="js-input-offset tape-textbox" placeholder="OFFSET">
+            <span class="js-button-tape-init button active">INIT</span>
+        </div>
+    </div>
+    <div class="tape-panel tape-export">
+        <div class="tape-panel-content tape-panel-content-right">
+            <span title="Export as plain text" class="js-button-raw button active">RAW</span>
+            <span title="Export as comma-separated values" class="js-button-csv button active">CSV</span>
+            <span title="Export as JSON" class="js-button-json button active">JSON</span>
+        </div>
+    </div>
+</div>
+
+<div id="help-overlay">
+<div id="help-box-container">
+<div id="help-close-button" title="CLOSE"><span class="symbol">close</span></div>
+<div id="help-box">
+    <h1>TMS V4 Documentation</h1>
+
+    <p>This is a comprehensive manual for the 4th version of my Turing Machine Simulator.
+        This application was created by <a href="https://github.com/slyphix">Justus "slyphix" Henneberg</a> in 2022 for the purpose of assisting in computer science education.
+
+    <h2>Programming and Installing</h2>
+
+    <p>The syntax for programming has changed since the last version, but you can still use programs from previous versions as-is.
+        However, to benefit from the most recent features, you will have to migrate to the new syntax eventually.
+
+    <p>The new syntax features <i>meta instructions</i>, which start with an <code>@</code> symbol and cannot be indented.
+        Meta instructions can only appear at the beginning of the program.
+        To opt in to the new syntax, write <code>@ADVANCED</code> as the first line of your code.
+
+    <p>The following meta instructions are available:
+    <p><code>@TAPES X</code> sets the number of tapes to <code>X</code>.
+    <p><code>@BLANK X</code> defines <code>X</code> as the blank symbol.
+    <p><code>@INIT X</code> sets the initial state of the machine to <code>X</code>.
+    <p><code>@HALT X</code> adds <code>X</code> to the set of halt states.
+    <p><code>@ACCEPT X</code> adds <code>X</code> to the set of accepting states.
+    <p><code>@COMMA X</code> replaces the <code>,</code> separator with <code>X</code>.
+    <p><code>@ARROW X</code> replaces the <code>-></code> separator with <code>X</code>.
+
+    <p>Every program using the new syntax needs to define an initial state as well as a blank symbol using the corresponding meta instructions.
+        All other meta instructions are optional.
+
+    <p>Accepting states are purely cosmetic:
+        The user interface will show whether the current state is accepting or not.
+        This feature is designed to be used for decision problems.
+
+    <p>Comments can be added at any point by using the <code>#</code> character at the beginning of a line.
+
+    <p>The remainder of the program consists of <i>transition rules</i>.
+        The form of a transition rule depends on the number of tapes.
+        Here are two examples of transition rules for a three-tape Turing Machine:
+
+    <p><code><span class="red">q0, a,b,c</span> -> <span class="green">q1, x,y,z, >,<,_</span></code>
+    <p><code><span class="red">q0, a,b,c</span> -> <span class="green">q1, x,y,z, ></span></code>
+
+    <p>A transition rule consists of a <span class="red">condition</span> and an <span class="green">action</span>, separated by an arrow symbol.
+        The <span class="red">condition</span> lists a state name followed by a symbol to match for each tape.
+        The <span class="green">action</span> consists of a state name to transition into, a symbol to write to each tape, followed by the direction each tape head is supposed to move in.
+        Directions can be specified as <code>&gt;</code> (right), <code>&lt;</code> (left) or <code>_</code> (no direction).
+        A shorthand notation can be used if the direction is identical for all tapes.
+
+    <p>The first exemplary transition rule matches if the Turing Machine is currently in state <code>q0</code> and the three tape heads read the symbols <code>a</code>, <code>b</code>, and <code>c</code>, respectively.
+        In this case, the Turing Machine transitions into state <code>q1</code>, writes <code>x</code>, <code>y</code>, and <code>z</code> to the three tapes,
+        then moves the first tape head right and the second head left.
+        The third head is not moved.
+
+    <p>The second example is identical to the first one, but moves all three tape heads right.
+
+    <p>Two more things are rather noteworthy:
+        Firstly, regular instructions ignore tabs and spaces.
+        Writing a space character is only possible through the user-defined blank symbol.
+        Secondly, while the Turing Machine theoretically supports more than one character per tape cell, only the first character will be shown on the user interface.
+
+    <p>When you are ready to run your program, press the <i>install</i> button in the bottom right corner.
+        The user interface will report if the simulator accepted the program, or if it encountered any errors during installation.
+        After a successful installation, you should see the specified number of tapes appear on the left side.
+
+    <h2>Controlling the Simulation</h2>
+
+    <p>Before starting the simulation, you can specify the initial contents of each tape.
+        Click one of the <i>init</i> buttons to set up all tapes and to reset the Turing Machine to its initial state.
+
+    <p>Click the <i>play/pause</i> button to start the simulation, causing the Turing Machine to perform a transition periodically.
+        Click the <i>play/pause</i> button again to pause the simulation.
+        You can change the speed while the simulation is running by using the buttons at the top.
+        Click the <i>step</i> button or press the space bar to perform a single transition.
+
+    <p>Click the <i>skip</i> button to simulate the machine in the background.
+        This results to a faster simulation.
+        To prevent endless loops, skipping will time out after a couple of seconds.
+        You can continue the simulation by pressing <i>skip</i> again.
+        You can abort skipping manually by clicking <i>play/pause</i>.
+
+    <p>During simulation, the simulator will show statistics, such as the current state, on the user interface.
+
+    <p>The simulation will halt automatically once either a halt state has been reached, or if there is no transition rule applicable to the current configuration.
+        Use one of the <i>init</i> buttons to reset the Turing Machine.
+
+    <h2>Bonus Features</h2>
+
+    <p>The features listed here are not part of the core simulator, but rather extras to enhance the user experience.
+
+    <h3>Progressive Web Application</h3>
+
+    <p>Some modern browsers allow websites to be installed like applications, so that they can be used even if there is no internet connection.
+        This is more convenient than downloading the page, especially for mobile users.
+        The simulator can be installed as an application, as long as your browser is compatible with Progressive Web Apps.
+
+    <p id="pwa-invitation" class="hidden">Your browser supports Progressive Web Apps! Click this paragraph to install the simulator as a PWA.
+
+    <h3>Inspecting the Tape</h3>
+
+    <p>Each tape is designed to keep the tape head in the center.
+        However, you can focus on a single cell instead, which will pin it in the center instead.
+        This can be done by moving the tape left or right with the buttons on either side on the tape, or by entering a position directly in the corresponding text field.
+        There are also buttons to quickly navigate to the leftmost and rightmost non-blank symbols on the tape.
+        To re-center the tape on the tape head, press the <i>reset</i> button.
+
+    <h3>Exporting Tape Contents</h3>
+
+    <p>To export the contents of a tape into a textual format, use the buttons on the bottom right on each tape.
+
+    <p>Exporting raw will copy the tape contents as the user sees it, using only the first character of each cell.
+
+    <p>You can also export into machine-readable formats:
+        Exporting as CSV will include all empty cells between populated cells, while JSON will only include populated cells.
+
+    <p>The exported tape will be added to the program as a comment.
+
+    <h3>Sharing your Program</h3>
+
+    <p>To link directly to a specific program, the web version of the simulator can embed the program into the URL.
+        This URL can then be saved or shared, and the embedded program will appear automatically once the URL is entered into a browser.
+        Click the <i>share</i> button in the bottom right to embed the currently entered program.
+        The program does not have to be syntactically correct in order to be embedded into the URL.
+
+    <p>The PWA version does not have a real URL, and therefore, the code is copied to the clipboard instead.
+
+    <p>If you manually change <code>code=</code> to <code>install=</code> in the URL, the program will install and initialize automatically once the page is loaded.
+
+    <p>You can also include suggestions for initial tape contents in your program, which will be copied to the respective input fields during installation.
+        To do so, add a comment of the form <code>#T1+42!abc</code> to the program, which contains the tape to be written to, the signed offset, and the text itself.
+
+    <h3>Loading Examples</h3>
+
+    <p>The simulator includes a list of example programs.
+        To load a program, click the <i>examples</i> button on the bottom right.
+        Each of the features mentioned above is included in at least one example.
+</div>
+</div>
+</div>
+
+<div id="rem-converter"></div>
+</body>
+</html>

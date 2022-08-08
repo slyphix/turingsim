@@ -1,0 +1,28 @@
+{
+  "name": "Turing Machine Simulator",
+  "short_name": "TMS",
+  "display": "standalone",
+  "start_url": "index.html",
+  "scope": ".",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "orientation": "landscape-primary",
+  "icons":[
+    {
+      "src": "resources/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "resources/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "resources/maskable_icon.png",
+      "sizes": "650x650",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
