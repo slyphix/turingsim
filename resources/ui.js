@@ -256,6 +256,32 @@ $(document).ready(() => {
     }
   }
 
+  function fillTapes() {
+    for (let tape = 0; tape < UI_STATE.tapeCount; ++tape) {
+      let characters = splitIntoGraphemeClusters(UI_ELEMENTS.tapeElements[tape].textFieldInitialContent.val());
+      let offsetString = UI_ELEMENTS.tapeElements[tape].textFieldInitialOffset.val();
+      let offset = 0;
+      if (offsetString.length > 0) {
+        if (!isNumeric(offsetString)) {
+          showError("Non-numeric offset input for tape " + (tape + 1));
+          return;
+        }
+        offset = Number(offsetString);
+      }
+      for (let index = 0; index < characters.length; ++index) {
+        if (characters[index] === " ") continue;
+        UI_STATE.tm.setTapeEntry(tape, index + offset, characters[index]);
+      }
+    }
+  }
+
+  function resetInitialContents() {
+    for (let tape = 0; tape < UI_STATE.tapeCount; ++tape) {
+      UI_ELEMENTS.tapeElements[tape].textFieldInitialContent.val("");
+      UI_ELEMENTS.tapeElements[tape].textFieldInitialOffset.val("");
+    }
+  }
+
   //////////////////////////////////////////////////////////////////////////////////////////////
   // TRANSPORT
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -299,26 +325,12 @@ $(document).ready(() => {
     forceCancelAnimation();
     cancelNextStepTimeout();
     cancelSkipWithoutResult();
+
     UI_STATE.tm.reset();
-    for (let tape = 0; tape < UI_STATE.tapeCount; ++tape) {
-      let characters = splitIntoGraphemeClusters(UI_ELEMENTS.tapeElements[tape].textFieldInitialContent.val());
-      let offsetString = UI_ELEMENTS.tapeElements[tape].textFieldInitialOffset.val();
-      let offset = 0;
-      if (offsetString.length > 0) {
-        if (!isNumeric(offsetString)) {
-          showError("Non-numeric offset input for tape " + (tape + 1));
-          return;
-        }
-        offset = Number(offsetString);
-      }
-      for (let index = 0; index < characters.length; ++index) {
-        if (characters[index] === " ") continue;
-        UI_STATE.tm.setTapeEntry(tape, index + offset, characters[index]);
-      }
-    }
+    fillTapes();
     setMode(UIMode.Paused);
     updateTapesFull();
-    showMessage("Reset successful.");
+    showMessage("Initialized successfully.");
   }
 
   function triggerPlayPause() {
@@ -417,9 +429,6 @@ $(document).ready(() => {
     UI_ELEMENTS.indicatorCodeChanged.addClass("hidden");
     UI_STATE.tapeCount = UI_STATE.tm.getTapeCount();
     setupTapes();
-    setMode(UIMode.Paused);
-    showMessage("Install successful");
-    updateTapesFull();
 
     // import persisted tapes
     for (let line of programText.split("\n")) {
@@ -434,6 +443,11 @@ $(document).ready(() => {
         }
       }
     }
+
+    fillTapes();
+    setMode(UIMode.Paused);
+    updateTapesFull();
+    showMessage("Installed successfully.");
   }
 
   function resizeTapes() {
@@ -558,6 +572,7 @@ $(document).ready(() => {
         addAsComment(text);
       });
       newTape.find(".js-button-tape-init").on("click", () => triggerResetAndSetup());
+      newTape.find(".js-button-tape-reset").on("click", () => resetInitialContents());
 
       UI_ELEMENTS.tapeContainer.append(newTape);
     }
@@ -624,7 +639,6 @@ $(document).ready(() => {
   } if (URL_PARAMS.has("install")) {
     UI_ELEMENTS.textFieldProgram.val(b64decode(URL_PARAMS.get("install")));
     install();
-    triggerResetAndSetup();
     URL_PARAMS.delete("install");
     updateURL();
   } else {
