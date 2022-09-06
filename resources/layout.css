@@ -9,17 +9,7 @@
 :root {
     /* after this, 1rem = 1px */
     font-size: 6.25%;
-}
 
-* {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-    background-color: transparent;
-    direction: ltr;
-}
-
-body {
     --dark-font: rgba(10, 10, 10, 1);
     --dark-bg: rgba(40, 40, 40, 0.9);
     --button-bg: rgba(99, 99, 99, 1);
@@ -35,7 +25,17 @@ body {
     --panel-spacing: 3rem;
     --top-bar-height: 50rem;
     --side-bar-width: 400rem;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: transparent;
+    direction: ltr;
+}
+
+body {
     font-size: 16rem;
     min-width: 800rem;
 }
@@ -122,10 +122,8 @@ body {
     padding: 3rem 6rem;
 }
 
-@media only screen and (max-width: 1400px) {
-    #top-panels .button .symbol-label {
-        display: none;
-    }
+.collapse-top-panels #top-panels .button .symbol-label {
+    display: none;
 }
 
 #side-panels {
@@ -189,7 +187,7 @@ body {
     box-sizing: border-box;
 
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr min-content;
     grid-template-rows: 1fr 1fr;
     grid-row-gap: 5rem;
     grid-column-gap: 5rem;
@@ -289,6 +287,7 @@ body {
     background-color: transparent;
     font-family: Consolas, Liberation Mono, monospace;
     font-weight: bold;
+    font-size: 16rem;
     color: white;
 }
 
@@ -336,10 +335,8 @@ body {
     column-gap: 0;
 }
 
-@media only screen and (max-width: 1200px) {
-    .tape-module {
-        grid-template-columns: [left] 1fr [right];
-    }
+.collapse-tape-modules .tape-module {
+    grid-template-columns: [left] 1fr [right];
 }
 
 .tape-panel {
@@ -505,7 +502,9 @@ body {
 
 .tape-container .button .symbol {
     color: white;
-    font-size: 20rem;
+    font-size: 22rem;
+    margin-top: 10rem;
+    margin-bottom: 10rem;
 }
 
 .tape-container .button.left {

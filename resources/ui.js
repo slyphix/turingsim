@@ -7,11 +7,16 @@ $(document).ready(() => {
   //////////////////////////////////////////////////////////////////////////////////////////////
 
   const REM_TO_PIXELS = 100 / $("#rem-converter").width();
+  const MAX_ZOOM = 5;
+  const MIN_ZOOM = -10;
   const SPEED_DELAYS = [1500, 1000, 300, 50];
   const PERSIST_FORMAT = /^#T([0-9]+)([+-][0-9]+)!(.*)$/;
   const GRAPHEME_SPLITTER = new GraphemeSplitter();
   const URL_PARAMS = new URL(location.href).searchParams;
   const UI_ELEMENTS = {
+    root: $(document.documentElement),
+    body: $("body"),
+
     buttonResetSetup: $("#control-reset-setup"),
     buttonPlayPause: $("#control-start-halt"),
     buttonStep: $("#control-step"),
@@ -28,6 +33,9 @@ $(document).ready(() => {
       $("#control-speed-slow"),
       $("#control-speed-fast"),
       $("#control-speed-faster")],
+
+    buttonZoomIn: $("#control-zoom-in"),
+    buttonZoomOut: $("#control-zoom-out"),
 
     textFieldProgram: $("#program"),
     indicatorCodeChanged: $("#code-changed-indicator"),
@@ -83,6 +91,14 @@ $(document).ready(() => {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // UI UTILITIES
   //////////////////////////////////////////////////////////////////////////////////////////////
+
+  function remToPixels(rem) {
+    return REM_TO_PIXELS * rem * UI_STATE.zoomFactor;
+  }
+
+  function pixelsToRem(pixels) {
+    return pixels / (UI_STATE.zoomFactor * REM_TO_PIXELS);
+  }
 
   function runningAsPWA() {
     return matchMedia('(display-mode: standalone)').matches;
@@ -184,6 +200,35 @@ $(document).ready(() => {
     UI_ELEMENTS.buttonSpeed[UI_STATE.selectedSpeed].addClass("active");
     UI_STATE.selectedSpeed = speed;
     UI_ELEMENTS.buttonSpeed[UI_STATE.selectedSpeed].removeClass("active");
+  }
+
+  function changeZoom(direction) {
+    if (direction > 0 && UI_STATE.zoom === MAX_ZOOM)
+      return;
+    if (direction < 0 && UI_STATE.zoom === MIN_ZOOM)
+      return;
+
+    UI_STATE.zoom += direction;
+    UI_STATE.zoomFactor = Math.pow(2, 0.1 * UI_STATE.zoom);
+
+    UI_ELEMENTS.root.css("font-size", UI_STATE.zoomFactor + "px");
+
+    UI_ELEMENTS.buttonZoomIn.toggleClass("active", UI_STATE.zoom !== MAX_ZOOM);
+    UI_ELEMENTS.buttonZoomOut.toggleClass("active", UI_STATE.zoom !== MIN_ZOOM);
+    handleResize();
+  }
+
+  function handleResize() {
+    let tapeContainerWidth = pixelsToRem(UI_ELEMENTS.tapeContainer.outerWidth());
+    console.log(tapeContainerWidth)
+
+    let collapseTopPanels = tapeContainerWidth < 960;
+    UI_ELEMENTS.body.toggleClass("collapse-top-panels", collapseTopPanels);
+
+    let collapseTapeModules = tapeContainerWidth < 700;
+    UI_ELEMENTS.body.toggleClass("collapse-tape-modules", collapseTapeModules);
+
+    resizeTapes();
   }
 
   function canResetAndSetup() {
@@ -453,7 +498,7 @@ $(document).ready(() => {
   function resizeTapes() {
     if (UI_STATE.tm === null) return;
 
-    let tapeEntryWidth = REM_TO_PIXELS * 50;
+    let tapeEntryWidth = remToPixels(50);
     let tapeContainerWidth = UI_ELEMENTS.tapeContainer.outerWidth();
     UI_STATE.halfTape = Math.ceil(tapeContainerWidth / tapeEntryWidth / 2) + 2;
     let newElementCount = UI_STATE.halfTape * 2 + 1;
@@ -591,10 +636,13 @@ $(document).ready(() => {
     worker: null,
     nextStepTimeout: null,
     tm: null,
-    tapeCount: 0
+    tapeCount: 0,
+    zoom: 0,
+    zoomFactor: 1,
   };
   setMode(UIMode.Uninitialized);
   selectSpeed(2);
+  changeZoom(0);
 
   UI_ELEMENTS.buttonResetSetup.on("click", triggerResetAndSetup);
   UI_ELEMENTS.buttonPlayPause.on("click", triggerPlayPause);
@@ -603,6 +651,8 @@ $(document).ready(() => {
   UI_ELEMENTS.buttonSpeed.forEach((button, i) => button.on("click", () => selectSpeed(i)));
   UI_ELEMENTS.textFieldProgram.on("input", () => UI_ELEMENTS.indicatorCodeChanged.removeClass("hidden"));
   UI_ELEMENTS.displayStatus.on("animationend", () => UI_ELEMENTS.displayStatus.removeClass("highlight"));
+  UI_ELEMENTS.buttonZoomIn.on("click", () => changeZoom(1));
+  UI_ELEMENTS.buttonZoomOut.on("click", () => changeZoom(-1));
 
   $(document).on("keypress", e => {
     if (e.target.closest("textarea, input")) return;
@@ -610,7 +660,7 @@ $(document).ready(() => {
     if (newSpeed >= 0) selectSpeed(newSpeed);
     if (e.which === 32) triggerStep();
   });
-  $(window).on("resize", resizeTapes);
+  $(window).on("resize", handleResize);
 
   for (let [desc, code] of Object.entries(examples)) {
     let button = document.createElement("div");
