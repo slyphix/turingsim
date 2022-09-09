@@ -9,7 +9,7 @@ $(document).ready(() => {
   const REM_TO_PIXELS = 100 / $("#rem-converter").width();
   const MAX_ZOOM = 5;
   const MIN_ZOOM = -10;
-  const SPEED_DELAYS = [1500, 1000, 300, 50];
+  const SPEED_DELAYS = [3000, 1000, 300, 50];
   const PERSIST_FORMAT = /^#T([0-9]+)([+-][0-9]+)!(.*)$/;
   const GRAPHEME_SPLITTER = new GraphemeSplitter();
   const URL_PARAMS = new URL(location.href).searchParams;
@@ -590,7 +590,7 @@ $(document).ready(() => {
           showMessage("ERROR: Non-numeric focus input for tape " + (i + 1));
         }
       });
-      newTape.find(".js-button-reset").on("click", () => resetFocus(i));
+      newTape.find(".js-button-head").on("click", () => resetFocus(i));
       newTape.find(".js-button-first").on("click", () => setFocus(i, UI_STATE.tm.getTapeMin(i)));
       newTape.find(".js-button-last").on("click", () => setFocus(i, UI_STATE.tm.getTapeMax(i)));
 
@@ -653,6 +653,7 @@ $(document).ready(() => {
   UI_ELEMENTS.displayStatus.on("animationend", () => UI_ELEMENTS.displayStatus.removeClass("highlight"));
   UI_ELEMENTS.buttonZoomIn.on("click", () => changeZoom(1));
   UI_ELEMENTS.buttonZoomOut.on("click", () => changeZoom(-1));
+  UI_ELEMENTS.overlayHelp.on("click", () => UI_ELEMENTS.overlayHelp.removeClass("visible"));
 
   $(document).on("keypress", e => {
     if (e.target.closest("textarea, input")) return;
@@ -678,6 +679,7 @@ $(document).ready(() => {
   $("#example-close-button").on("click", () => UI_ELEMENTS.overlayExamples.removeClass("visible"));
   $("#help-button").on("click", () => UI_ELEMENTS.overlayHelp.addClass("visible"));
   $("#help-close-button").on("click", () => UI_ELEMENTS.overlayHelp.removeClass("visible"));
+  $("#help-box").on("click", e => e.stopPropagation());
   $("#embed-button").on("click", () => embed());
   $("#install-button").on("click", () => install());
 

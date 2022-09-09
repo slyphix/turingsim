@@ -111,7 +111,7 @@
             Focus on
             <input type="text" class="js-input-position tape-textbox" placeholder="POSITION">
             <span class="js-button-set button active">SET</span>
-            <span class="js-button-reset button active">RESET</span>
+            <span class="js-button-head button active">HEAD</span>
             <span class="js-button-first button active">FIRST</span>
             <span class="js-button-last button active">LAST</span>
         </div>
@@ -161,7 +161,7 @@
 
     <h2>Programming and Installing</h2>
 
-    <p>The syntax for programming has changed since the last version, but you can still use programs from previous versions as-is.
+    <p>The syntax for programming has changed since the last version, but you can still run programs from previous versions as-is.
         However, to benefit from the most recent features, you will have to migrate to the new syntax eventually.
 
     <p>The new syntax features <i>meta instructions</i>, which start with an <code>@</code> symbol and cannot be indented.
@@ -177,7 +177,7 @@
     <p><code>@COMMA X</code> replaces the <code>,</code> separator with <code>X</code>.
     <p><code>@ARROW X</code> replaces the <code>-></code> separator with <code>X</code>.
 
-    <p>Every program using the new syntax needs to define an initial state as well as a blank symbol using the corresponding meta instructions.
+    <p>Every program using the new syntax has to define an initial state as well as a blank symbol using the corresponding meta instructions.
         All other meta instructions are optional.
 
     <p>Accepting states are purely cosmetic:
@@ -196,7 +196,7 @@
     <p>A transition rule consists of a <span class="red">condition</span> and an <span class="green">action</span>, separated by an arrow symbol.
         The <span class="red">condition</span> lists a state name followed by a symbol to match for each tape.
         The <span class="green">action</span> consists of a state name to transition into, a symbol to write to each tape, followed by the direction each tape head is supposed to move in.
-        Directions can be specified as <code>&gt;</code> (right), <code>&lt;</code> (left) or <code>_</code> (no direction).
+        Directions can be specified as <code>&gt;</code>/<code>R</code> (right), <code>&lt;</code>/<code>L</code> (left) or <code>_</code> (no direction).
         A shorthand notation can be used if the direction is identical for all tapes.
 
     <p>The first exemplary transition rule matches if the Turing Machine is currently in state <code>q0</code> and the three tape heads read the symbols <code>a</code>, <code>b</code>, and <code>c</code>, respectively.
@@ -208,8 +208,8 @@
 
     <p>Two more things are rather noteworthy:
         Firstly, regular instructions ignore tabs and spaces.
-        Writing a space character is only possible through the user-defined blank symbol.
-        Secondly, while the Turing Machine theoretically supports more than one character per tape cell, only the first character will be shown on the user interface.
+        Writing a space character to the tape is only possible through the user-defined blank symbol.
+        Secondly, while the Turing Machine theoretically supports more than one character per tape cell, only the first character will be shown in the user interface.
 
     <p>When you are ready to run your program, press the <i>install</i> button in the bottom right corner.
         The user interface will report if the simulator accepted the program, or if it encountered any errors during installation.
@@ -217,7 +217,7 @@
 
     <h2>Controlling the Simulation</h2>
 
-    <p>Before starting the simulation, you can specify the initial contents of each tape.
+    <p>Before starting the simulation, you can specify the initial contents of each tape in the corresponding text fields.
         Click one of the <i>init</i> buttons to set up all tapes and to reset the Turing Machine to its initial state.
 
     <p>Click the <i>play/pause</i> button to start the simulation, causing the Turing Machine to perform a transition periodically.
@@ -226,12 +226,12 @@
         Click the <i>step</i> button or press the space bar to perform a single transition.
 
     <p>Click the <i>skip</i> button to simulate the machine in the background.
-        This results to a faster simulation.
+        This results in a faster simulation.
         To prevent endless loops, skipping will time out after a couple of seconds.
         You can continue the simulation by pressing <i>skip</i> again.
         You can abort skipping manually by clicking <i>play/pause</i>.
 
-    <p>During simulation, the simulator will show statistics, such as the current state, on the user interface.
+    <p>During simulation, the simulator will show statistics in the user interface.
 
     <p>The simulation will halt automatically once either a halt state has been reached, or if there is no transition rule applicable to the current configuration.
         Use one of the <i>init</i> buttons to reset the Turing Machine.
@@ -244,17 +244,17 @@
 
     <p>Some modern browsers allow websites to be installed like applications, so that they can be used even if there is no internet connection.
         This is more convenient than downloading the page, especially for mobile users.
-        The simulator can be installed as an application, as long as your browser is compatible with Progressive Web Apps.
+        The simulator can be installed as an application, provided that your browser is compatible with Progressive Web Apps.
 
-    <p id="pwa-invitation" class="hidden">Your browser supports Progressive Web Apps! Click this paragraph to install the simulator as a PWA.
+    <p id="pwa-invitation" class="hidden">Your browser supports Progressive Web Apps! Click this paragraph to install the simulator as a PWA.</p>
 
     <h3>Inspecting the Tape</h3>
 
-    <p>Each tape is designed to keep the tape head in the center.
-        However, you can focus on a single cell instead, which will pin it in the center instead.
-        This can be done by moving the tape left or right with the buttons on either side on the tape, or by entering a position directly in the corresponding text field.
+    <p>Each tape is usually centered around the tape head, since all modifications to the tape will happen there.
+        However, you can instead choose to keep the view focused to a fixed cell to prevent the tape from moving all the time.
+        This can be done by navigating left or right with the buttons on either side of the tape, or by entering a position directly in the corresponding text field.
         There are also buttons to quickly navigate to the leftmost and rightmost non-blank symbols on the tape.
-        To re-center the tape on the tape head, press the <i>reset</i> button.
+        To re-center the tape around the tape head, press the <i>head</i> button.
 
     <h3>Exporting Tape Contents</h3>
 
