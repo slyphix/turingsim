@@ -6,7 +6,7 @@
   "scope": ".",
   "theme_color": "#000000",
   "background_color": "#000000",
-  "orientation": "landscape-primary",
+  "orientation": "any",
   "icons":[
     {
       "src": "resources/android-chrome-192x192.png",
