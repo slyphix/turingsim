@@ -1,4 +1,4 @@
-const cacheName = "tms-cache-v12";
+const cacheName = "tms-cache-v13";
 const assets = [
   "browserconfig.xml",
   "index.html",

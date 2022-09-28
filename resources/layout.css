@@ -38,6 +38,7 @@
 body {
     font-size: 16rem;
     min-width: 800rem;
+    padding-bottom: 30rem;
 }
 
 #rem-converter {
@@ -187,7 +188,7 @@ body {
     box-sizing: border-box;
 
     display: grid;
-    grid-template-columns: 1fr 1fr min-content;
+    grid-template-columns: 1fr 1fr min-content min-content;
     grid-template-rows: 1fr 1fr;
     grid-row-gap: 5rem;
     grid-column-gap: 5rem;
@@ -195,6 +196,8 @@ body {
 }
 
 #install-panel .symbol {
+    position: relative;
+    top: -1rem;
     font-size: 20rem;
 }
 
@@ -686,4 +689,59 @@ body {
 
 #pwa-invitation.hidden {
     display: none;
+}
+
+
+.reduced-side-view #side-panels {
+    grid-template-rows: [code] auto [install] min-content;
+}
+
+.reduced-side-view #statistics-panel {
+    display: none;
+}
+
+.reduced-side-view #status-panel {
+    display: none;
+}
+
+
+.hide-side-panels #side-panels {
+    display: none;
+}
+
+.hide-side-panels #tapes {
+    margin-right: var(--panel-spacing);
+}
+
+.hide-side-panels #top-panels {
+    width: calc(100% - 40rem - var(--panel-spacing));
+}
+
+
+#collapse-panel {
+    position: fixed;
+    color: white;
+    background-color: var(--darker-bg);
+    right: 0;
+    top: 0;
+    padding: 5rem;
+    padding-bottom: 7rem;
+    text-align: center;
+    z-index: 10000;
+    display: none;
+}
+
+#collapse-panel .button {
+    width: 32rem;
+    padding: 3rem 0;
+}
+
+#collapse-panel .button .symbol {
+    position: relative;
+    top: -1rem;
+    font-size: 26rem;
+}
+
+.hide-side-panels #collapse-panel {
+    display: block;
 }

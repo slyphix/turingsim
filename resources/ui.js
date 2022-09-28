@@ -42,6 +42,8 @@ $(document).ready(() => {
     overlayExamples: $("#example-selection-overlay"),
     overlayHelp: $("#help-overlay"),
 
+    topPanels: $("#top-panels"),
+
     tapeContainer: $("#tapes"),
     tapeTemplate: $("#tape-template"),
     halfTape: 0,
@@ -219,13 +221,10 @@ $(document).ready(() => {
   }
 
   function handleResize() {
-    let tapeContainerWidth = pixelsToRem(UI_ELEMENTS.tapeContainer.outerWidth());
-    console.log(tapeContainerWidth)
-
-    let collapseTopPanels = tapeContainerWidth < 960;
+    let collapseTopPanels = pixelsToRem(UI_ELEMENTS.topPanels.outerWidth()) < 980;
     UI_ELEMENTS.body.toggleClass("collapse-top-panels", collapseTopPanels);
 
-    let collapseTapeModules = tapeContainerWidth < 700;
+    let collapseTapeModules = pixelsToRem(UI_ELEMENTS.tapeContainer.outerWidth()) < 700;
     UI_ELEMENTS.body.toggleClass("collapse-tape-modules", collapseTapeModules);
 
     resizeTapes();
@@ -682,6 +681,15 @@ $(document).ready(() => {
   $("#help-box").on("click", e => e.stopPropagation());
   $("#embed-button").on("click", () => embed());
   $("#install-button").on("click", () => install());
+  $("#control-stats-collapse").on("click", () => UI_ELEMENTS.body.toggleClass("reduced-side-view"));
+  $("#control-full-collapse").on("click", () => {
+    UI_ELEMENTS.body.addClass("hide-side-panels");
+    handleResize();
+  });
+  $("#uncollapse").on("click", () => {
+    UI_ELEMENTS.body.removeClass("hide-side-panels");
+    handleResize();
+  });
 
   if (URL_PARAMS.has("code")) {
     UI_ELEMENTS.textFieldProgram.val(b64decode(URL_PARAMS.get("code")));
