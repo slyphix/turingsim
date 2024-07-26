@@ -155,8 +155,8 @@ examples["Features Demo (Advanced Syntax)"] = `
 @BLANK _
 @COMMA ;
 @ARROW =>
-@HALT \uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08
-@ACCEPT \uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08
+@HALT \uD83D\uDC68\u200D\uD83C\uDF93
+@ACCEPT \uD83D\uDC68\u200D\uD83C\uDF93
 
 # you can still use @ and # as states
 # by using a space as the first character
@@ -166,6 +166,6 @@ examples["Features Demo (Advanced Syntax)"] = `
 # remap "," and "->" to use as states
 ,;_  => ->;3;>
 
-# you can also use unicode symbols
-->;_ => \uD83C\uDFF3\uFE0F\u200D\uD83C\uDF08;4;>
+# you can also use multi-symbol unicode symbols
+->;_ => \uD83D\uDC68\u200D\uD83C\uDF93;4;>
 `.slice(1);
